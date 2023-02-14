@@ -2,9 +2,14 @@ import 'reactflow/dist/style.css'
 import ReactFlow, {
   Controls,
   Background,
+  ConnectionMode,
+  useEdgesState,
+  addEdge,
+  Connection,
 } from 'reactflow';
 import { zinc } from 'tailwindcss/colors'
 import { Square } from './nodes/Square';
+import { useCallback } from 'react';
 
 const NODE_TYPES ={
   square: Square,
@@ -32,12 +37,22 @@ const INICIAL_NODES = [{
 
 function App() {
 
+  const [edges, setEdges, onEdgesChange] = useEdgesState([])
+
+  const onConnect = useCallback((connection:Connection) =>{
+    return setEdges(edges => addEdge(connection, edges))
+  },[])
+
   return (
     <div 
     className='w-screen h-screen'
     >
     <ReactFlow
+    connectionMode={ConnectionMode.Loose}
     nodeTypes={NODE_TYPES}
+    edges={edges}
+    onEdgesChange={onEdgesChange}
+    onConnect={onConnect}
     nodes={INICIAL_NODES}
     >
       <Background
